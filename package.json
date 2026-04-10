@@ -1,0 +1,11 @@
+{
+  "name": "hermes-remote-adapter",
+  "version": "0.1.0",
+  "description": "Paperclip adapter for remote Hermes Agent via OpenAI-compatible API",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./server": "./server/index.js"
+  }
+}
