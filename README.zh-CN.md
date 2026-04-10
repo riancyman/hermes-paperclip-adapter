@@ -27,6 +27,42 @@
 4. 实时将响应流回 Paperclip（在 UI 中可见）
 5. 通过 `X-Hermes-Session-Id` 支持跨次运行的 session 续接
 
+## 背景：OpenClaw 与 Hermes
+
+### OpenClaw 的工作方式
+
+Paperclip 最初使用 [OpenClaw](https://github.com/nicepkg/openclaw) 作为远程 agent 运行时。OpenClaw 暴露一个 **WebSocket 网关**（默认端口 `18789`），Paperclip 通过内置的 `openclaw_gateway` 适配器连接。协议是私有的 —— 持久 WebSocket 连接，配合设备认证（Ed25519 密钥对）、会话管理和自定义 RPC 消息格式。
+
+```
+Paperclip ──WebSocket──▶ OpenClaw Gateway (:18789)
+           (私有协议, 设备认证, 持久连接)
+```
+
+### 为什么迁移到 Hermes
+
+[Hermes Agent](https://github.com/NousResearch/hermes-agent) 是 OpenClaw 的继任者（内置 `hermes claw migrate` 迁移工具）。迁移的主要原因：
+
+- **活跃开发** — Hermes 持续维护，频繁发布新版本；OpenClaw 已停止更新
+- **更丰富的工具** — 内置 skills 系统、MCP 支持、多平台消息网关（Telegram、Discord 等）
+- **灵活的模型路由** — 支持多个推理提供商（OpenRouter、Anthropic、自定义端点等），具备凭证池和降级链
+- **更强的 agent 能力** — 上下文压缩、会话持久化、检查点/恢复、浏览器自动化
+
+### 适配器的空白
+
+但 Hermes 并未实现 OpenClaw 的 WebSocket 网关协议。Paperclip 内置的 `hermes_local` 适配器只能通过 spawn 本地 CLI 进程来工作 —— 无法连接到运行在其他设备上的 Hermes 实例。
+
+本插件填补了这一空白，它连接到 Hermes 的 **Gateway API Server** —— 一个 OpenAI 兼容的 HTTP 端点（`/v1/chat/completions`），由 Hermes 作为网关平台之一暴露。这带来了：
+
+- **标准协议** — OpenAI chat completions 格式，SSE 流式传输（无私有协议）
+- **更简单的认证** — Bearer token 替代 Ed25519 设备密钥对
+- **无状态 HTTP** — 无需管理持久 WebSocket 连接
+- **会话续接** — 通过 `X-Hermes-Session-Id` 头实现跨次运行的会话延续
+
+```
+Paperclip ──HTTP SSE──▶ Hermes Gateway API Server (:8642)
+           (OpenAI 兼容, Bearer 认证, 无状态)
+```
+
 ## 前提条件
 
 - 远程设备上安装 **Hermes Agent**（v0.8.0+）
