@@ -14,10 +14,10 @@
 
 ```
 ┌─────────────────────┐         HTTP SSE          ┌───────────────────────┐
-│  Paperclip (200)    │ ──────────────────────────▶│  Hermes Agent (201)   │
+│  Paperclip Server   │ ──────────────────────────▶│  Hermes Agent         │
 │                     │  POST /v1/chat/completions │                       │
 │  hermes_remote      │ ◀──────────────────────────│  Gateway API Server   │
-│  adapter plugin     │    streaming response      │  (port 8642)          │
+│  adapter plugin     │    streaming response      │  (默认端口 8642)       │
 └─────────────────────┘                            └───────────────────────┘
 ```
 
@@ -94,7 +94,7 @@ git clone https://github.com/riancyman/hermes-paperclip-adapter.git hermes-remot
 ### 4. 重启 Paperclip
 
 ```bash
-docker restart docker-paperclip-1
+docker restart <paperclip容器名>
 ```
 
 检查日志确认加载成功：

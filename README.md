@@ -14,10 +14,10 @@ This adapter enables [Paperclip](https://github.com/paperclipai/paperclip) to ma
 
 ```
 ┌─────────────────────┐         HTTP SSE          ┌───────────────────────┐
-│  Paperclip (200)    │ ──────────────────────────▶│  Hermes Agent (201)   │
+│  Paperclip Server   │ ──────────────────────────▶│  Hermes Agent         │
 │                     │  POST /v1/chat/completions │                       │
 │  hermes_remote      │ ◀──────────────────────────│  Gateway API Server   │
-│  adapter plugin     │    streaming response      │  (port 8642)          │
+│  adapter plugin     │    streaming response      │  (default port 8642)  │
 └─────────────────────┘                            └───────────────────────┘
 ```
 
@@ -94,7 +94,7 @@ Create or edit `~/.paperclip/adapter-plugins.json` (inside the Paperclip contain
 ### 4. Restart Paperclip
 
 ```bash
-docker restart docker-paperclip-1
+docker restart <paperclip-container>
 ```
 
 Check logs for:
