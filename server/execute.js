@@ -73,10 +73,10 @@ Title: {{taskTitle}}
 ## Workflow
 
 1. Work on the task using your tools
-2. When done, mark the issue as completed:
+2. CRITICAL: When done, you MUST post your FULL work result as a comment on the issue BEFORE marking it done. The comment must contain ALL deliverables (analysis reports, code, summaries, etc.) — not just "DONE". Anyone reading the issue should see the complete result without needing to check run logs.
+   \`paperclip_api("/issues/{{taskId}}/comments", "POST", {"body": "<your full detailed result here>"})\`
+3. Then mark the issue as completed:
    \`paperclip_api("/issues/{{taskId}}", "PATCH", {"status": "done"})\`
-3. Post a completion comment summarizing what you did:
-   \`paperclip_api("/issues/{{taskId}}/comments", "POST", {"body": "DONE: <your summary>"})\`
 4. If this issue has a parent (check the issue body or comments for references like TRA-XX), post a brief notification on the parent issue:
    \`paperclip_api("/issues/PARENT_ISSUE_ID/comments", "POST", {"body": "{{agentName}} completed {{taskId}}. Summary: <brief>"})\`
 {{/taskId}}
