@@ -29,6 +29,7 @@ const DEFAULT_PROMPT_TEMPLATE = `You are "{{agentName}}", an AI agent employee i
 
 IMPORTANT: Use Python \`urllib.request\` for ALL Paperclip API calls. Do NOT use terminal/curl — it may be blocked by security scanning.
 IMPORTANT: You MUST include the Authorization header on EVERY Paperclip API call.
+IMPORTANT: If you have been working on this task in a previous session, CONTINUE where you left off. Do NOT restart from the beginning. Check your previous progress first.
 
 Your Paperclip identity:
   Agent ID: {{agentId}}
