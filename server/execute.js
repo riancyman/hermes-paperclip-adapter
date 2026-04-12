@@ -160,6 +160,22 @@ function buildPrompt(ctx, config) {
 }
 
 // ---------------------------------------------------------------------------
+// Log filtering — hide tool-call code blocks and redact JWT tokens
+// ---------------------------------------------------------------------------
+const TOOL_CALL_RE = /`[🐍💻🌐📜📸👁️][^`]*`/g;
+const JWT_RE = /eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}/g;
+
+function sanitizeLogChunk(chunk) {
+  // Strip tool-call code blocks (🐍 python, 💻 terminal, 🌐 browser, etc.)
+  let cleaned = chunk.replace(TOOL_CALL_RE, "");
+  // Redact any remaining JWT tokens
+  cleaned = cleaned.replace(JWT_RE, "[REDACTED]");
+  // Collapse excessive whitespace left after stripping
+  cleaned = cleaned.replace(/\n{3,}/g, "\n\n");
+  return cleaned;
+}
+
+// ---------------------------------------------------------------------------
 // SSE parser
 // ---------------------------------------------------------------------------
 function parseSSELine(line) {
@@ -304,7 +320,10 @@ export async function execute(ctx) {
           const delta = parsed.data.choices?.[0]?.delta;
           if (delta?.content) {
             fullResponse += delta.content;
-            await ctx.onLog("stdout", delta.content);
+            const logChunk = sanitizeLogChunk(delta.content);
+            if (logChunk.trim()) {
+              await ctx.onLog("stdout", logChunk);
+            }
           }
 
           // Check for usage in the final chunk
