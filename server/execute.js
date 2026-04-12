@@ -102,13 +102,7 @@ Address the comment, POST a reply if needed, then continue working.
    - Do the work in the project directory: {{projectName}}
    - When done, mark complete and post a comment (see Workflow steps 2-4 above)
 
-3. If no issues assigned to you, check for unassigned backlog issues:
-   \`issues = paperclip_api("/companies/{{companyId}}/issues?status=backlog")\`
-   \`unassigned = [i for i in issues if not i.get("assigneeAgentId")]\`
-   If you find a relevant issue, assign it to yourself:
-   \`paperclip_api("/issues/ISSUE_ID", "PATCH", {"assigneeAgentId": "{{agentId}}", "status": "todo"})\`
-
-4. If truly nothing to do, report briefly what you checked.
+3. If NO issues are assigned to you, do NOT look for or self-assign unassigned work. Simply report that you have no assigned tasks and exit.
 {{/noTask}}`;
 
 // Minimal Mustache-like template rendering
